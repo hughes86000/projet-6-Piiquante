@@ -14,20 +14,23 @@ exports.getOneSauce = (req, res, next) => {
 }
 
 exports.createSauce = (req, res, next) => {
-    const sauceObject = JSON.parse(req.body.thing);
+    const sauceObject = JSON.parse(req.body.sauce);
     delete sauceObject._id;
     const sauce = new Sauce({
         ...sauceObject,
         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
         likes: 0,
-        dislikes: 0,
-        usersLiked: [' '],
-        usersdisLiked: [' '],
+        disLikes: 0,
+        usersLiked: [],
+        usersDisliked: [],
       });
       sauce
         .save()
         .then(() => res.status(201).json({ message: 'Sauce enregistré !'}))
-        .catch((error) => res.status(400).json( { error }));
+        .catch((error) => {
+          console.log(error)
+          res.status(400).json( { error }
+            )});
     };  
 
 exports.updateSauce = (req, res, next) => {

@@ -26,7 +26,8 @@ exports.signup = (req, res, next) => {
 
 
 exports.login = (req, res, next) => {
-    User.findOne({ email: req.body.email })
+    const hashedEmail = cryptojs.HmacSHA512(req.body.email, process.env.SECRET_CRYPTOJS_TOKEN).toString(cryptojs.enc.Base64);
+    User.findOne({ email: hashedEmail })
         .then(user => {
             if (!user) {
                 return res.status(401).json({ message: 'Paire login/mot de passe incorrecte'});
@@ -40,7 +41,7 @@ exports.login = (req, res, next) => {
                         userId: user._id,
                         token: jwt.sign(
                             { userId: user._id },
-                            'RANDOM_TOKEN_SECRET',
+                            process.env.SECRET_Token,
                             { expiresIn: '24h' }
                         )
                     });
